@@ -20,4 +20,13 @@ public class JwtConfig {
     @Value("${security.jwt.secret:secret}")
     private String secret;
 
+    @Value("${security.jwt.keypass}")
+    private String keypass;
+
+    @Value("${security.jwt.jks-file:jwt.jks}")
+    private String jksFile;
+
+    @Value("${security.jwt.key-alias}")
+    private String keyAlias;
+
 }

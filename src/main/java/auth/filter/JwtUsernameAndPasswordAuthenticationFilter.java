@@ -18,11 +18,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.Key;
+import java.security.KeyStore;
 import java.sql.Date;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter   {
+
 
     // We use auth manager to validate the user credentials
     private AuthenticationManager authManager;
@@ -65,20 +70,30 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
-        Long now = System.currentTimeMillis();
-        String token = Jwts.builder()
-                .setSubject(auth.getName())
-                // Convert to list of strings.
-                // This is important because it affects the way we get them back in the Gateway.
-                .claim("authorities", auth.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + jwtConfig.getExpiration() * 1000))  // in milliseconds
-                .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret().getBytes())
-                .compact();
 
-        // Add token to header
-        response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(jwtConfig.getJksFile())) {
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(inputStream, jwtConfig.getKeypass().toCharArray());
+            Key key = keyStore.getKey(jwtConfig.getKeyAlias(), jwtConfig.getKeypass().toCharArray());
+
+            Long now = System.currentTimeMillis();
+            String token = Jwts.builder()
+                    .setSubject(auth.getName())
+                    // Convert to list of strings.
+                    // This is important because it affects the way we get them back in the Gateway.
+                    .claim("authorities", auth.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                    .setIssuedAt(new Date(now))
+                    .setExpiration(new Date(now + jwtConfig.getExpiration() * 1000))  // in milliseconds
+                    .signWith(SignatureAlgorithm.RS256, key)
+                    .compact();
+
+            // Add token to header
+            response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     // A (temporary) class just to represent the user credentials
