@@ -6,7 +6,7 @@
 
     <groupId>share.music</groupId>
     <artifactId>auth-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -56,4 +56,13 @@
             <version>1.18.6</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
