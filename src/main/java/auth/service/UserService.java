@@ -18,7 +18,7 @@ public class UserService {
 
 
     public AppUser findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsernameIgnoreCase(username);
     }
 
     public void saveUser(AppUser user) {

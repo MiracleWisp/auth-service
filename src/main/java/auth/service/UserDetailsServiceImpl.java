@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
-@Service   // It has to be annotated with @Service.
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService  {
 
 
@@ -25,7 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        AppUser user = userRepository.findByUsername(username);
+        AppUser user = userRepository.findByUsernameIgnoreCase(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
@@ -34,7 +34,4 @@ public class UserDetailsServiceImpl implements UserDetailsService  {
 
         return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
     }
-
-    // A (temporary) class represent the user saved in the database.
-
 }
