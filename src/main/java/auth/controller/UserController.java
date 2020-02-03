@@ -1,8 +1,6 @@
 package auth.controller;
 
-import auth.dto.Response;
 import auth.entity.AppUser;
-import auth.feign.UserClient;
 import auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -20,9 +18,6 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    UserClient userClient;
-
-    @Autowired
     UserService userService;
 
     @PostMapping("/signup")
@@ -38,17 +33,11 @@ public class UserController {
                     .status(HttpStatus.CONFLICT)
                     .body("There is already a user registered with the username provided");
         } else {
-            Response response = userClient.createUser(user);
-            if (response.isSuccessful()) {
-                userService.saveUser(user);
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body("User created");
-            } else {
-                return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Try again");
-            }
+            userService.saveUser(user);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("User created");
+
         }
     }
 }

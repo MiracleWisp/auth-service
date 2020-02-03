@@ -1,0 +1,28 @@
+server:
+  port: 8081
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.lob.non_contextual_creation: true
+  datasource:
+    url: jdbc:postgresql://laurenfrost.tk:5432/lyosha
+    username: auth
+    password: authservice
+    driver-class-name: org.postgresql.Driver
+    initialization-mode: always
+
+security:
+  jwt:
+    secret: mySecretKey
+    keypass: authservice
+    jks-file: jwt.jks
+    key-alias: jwtkey
+
+feign:
+  userclient:
+    url: http://laurenfrost.tk:8082

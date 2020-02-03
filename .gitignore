@@ -30,6 +30,3 @@ target
 .vscode
 *.iml
 
-src/main/resources/application.yml
-*jks
-
