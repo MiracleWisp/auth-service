@@ -45,7 +45,7 @@ pipeline {
                 sh 'ssh Rinslet docker stop auth || true'
                 sh 'ssh Rinslet docker image rm miraclewisp/protein-auth || true'
                 sh 'ssh Rinslet docker pull miraclewisp/protein-auth'
-                sh 'ssh Rinslet docker run --rm --name auth -d -p 80:80 miraclewisp/protein-auth'
+                sh 'ssh Rinslet docker run --rm --name auth -d -p 8081:8081 miraclewisp/protein-auth'
             }
         }
     }
